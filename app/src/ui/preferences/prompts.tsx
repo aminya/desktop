@@ -13,6 +13,7 @@ interface IPromptsPreferencesProps {
   readonly confirmForcePush: boolean
   readonly confirmUndoCommit: boolean
   readonly uncommittedChangesStrategy: UncommittedChangesStrategy
+  readonly discardToTrash: boolean
   readonly onConfirmDiscardChangesChanged: (checked: boolean) => void
   readonly onConfirmDiscardChangesPermanentlyChanged: (checked: boolean) => void
   readonly onConfirmDiscardStashChanged: (checked: boolean) => void
@@ -23,6 +24,7 @@ interface IPromptsPreferencesProps {
   readonly onUncommittedChangesStrategyChanged: (
     value: UncommittedChangesStrategy
   ) => void
+  readonly onDiscardToTrashChanged: (checked: boolean) => void
 }
 
 interface IPromptsPreferencesState {
@@ -34,6 +36,7 @@ interface IPromptsPreferencesState {
   readonly confirmForcePush: boolean
   readonly confirmUndoCommit: boolean
   readonly uncommittedChangesStrategy: UncommittedChangesStrategy
+  readonly discardToTrash: boolean
 }
 
 export class Prompts extends React.Component<
@@ -53,6 +56,7 @@ export class Prompts extends React.Component<
       confirmForcePush: this.props.confirmForcePush,
       confirmUndoCommit: this.props.confirmUndoCommit,
       uncommittedChangesStrategy: this.props.uncommittedChangesStrategy,
+      discardToTrash: this.props.discardToTrash,
     }
   }
 
@@ -124,6 +128,15 @@ export class Prompts extends React.Component<
   ) => {
     this.setState({ uncommittedChangesStrategy: value })
     this.props.onUncommittedChangesStrategyChanged(value)
+  }
+
+  private onDiscardToTrashChanged = (
+    event: React.FormEvent<HTMLInputElement>
+  ) => {
+    const value = event.currentTarget.checked
+
+    this.setState({ discardToTrash: value })
+    this.props.onDiscardToTrashChanged(event.currentTarget.checked)
   }
 
   public render() {
@@ -224,6 +237,16 @@ export class Prompts extends React.Component<
             }
             label="Always stash and leave my changes on the current branch"
             onSelected={this.onUncommittedChangesStrategyChanged}
+          />
+        </div>
+        <div className="advanced-section">
+          <h2>Discarding Changes</h2>
+          <Checkbox
+            label="Discard the changes to the Trash"
+            value={
+              this.state.discardToTrash ? CheckboxValue.On : CheckboxValue.Off
+            }
+            onChange={this.onDiscardToTrashChanged}
           />
         </div>
       </DialogContent>
